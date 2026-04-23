@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+
+## --------------------------- ML API --------------------------- ##
+  hotel-api:
+    image: mudvainehn/hotel-ml-api:latest
+
+    networks:
+      - daniloriveranet
+
+    environment:
+      - AWS_ACCESS_KEY_ID=root
+      - AWS_SECRET_ACCESS_KEY=rootpassword
+      - AWS_DEFAULT_REGION=eu-south
+      - MINIO_ENDPOINT=https://ssminiobackss.riv-dev.es
+
+    deploy:
+      mode: replicated
+      replicas: 2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.hotel_api.rule=Host(`mlapi.riv-dev.es`)
+        - traefik.http.routers.hotel_api.entrypoints=websecure
+        - traefik.http.routers.hotel_api.tls.certresolver=letsencryptresolver
+        - traefik.http.services.hotel_api.loadbalancer.server.port=8000
+
+## --------------------------- STREAMLIT --------------------------- ##
+  hotel-ui:
+    image: mudvainehn/hotel-streamlit:latest
+
+    networks:
+      - daniloriveranet
+
+    environment:
+      - API_URL=http://hotel-api:8000
+
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.hotel_ui.rule=Host(`mlui.riv-dev.es`)
+        - traefik.http.routers.hotel_ui.entrypoints=websecure
+        - traefik.http.routers.hotel_ui.tls.certresolver=letsencryptresolver
+        - traefik.http.services.hotel_ui.loadbalancer.server.port=8501
+
+networks:
+  daniloriveranet:
+    external: true

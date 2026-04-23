@@ -2,6 +2,8 @@ fastapi
 uvicorn
 pandas
 joblib
-python-dotenv
 scikit-learn
 xgboost
+python-dotenv
+requests
+dvc
