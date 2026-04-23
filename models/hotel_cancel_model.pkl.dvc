@@ -1,5 +1,5 @@
 outs:
-- md5: 654d90c303391830beb22f765e56d5fa
+- md5: 5a4c5a7c201aacd876874a171fb92a85
   size: 630192
   hash: md5
   path: hotel_cancel_model.pkl
