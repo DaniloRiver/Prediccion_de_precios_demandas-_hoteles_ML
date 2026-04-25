@@ -1,7 +1,8 @@
+.git
+.gitignore
+.dvc
 __pycache__
 *.pyc
-*.pkl
 .env
-.dvc
 data/
-.git
+notebooks/

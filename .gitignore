@@ -1,5 +1,12 @@
 .env
-data/processed/
-data/raw/
+
+# datos reales (raw y processed se ignoran en contenido)
+data/raw/*
+data/processed/*
+
+# PERO permitir tracking de estructura DVC
+!*.dvc
+
+# modelos entrenados reales
 models/*
 !models/*.dvc

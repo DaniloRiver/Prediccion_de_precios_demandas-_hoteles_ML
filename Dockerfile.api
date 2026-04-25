@@ -6,11 +6,17 @@ RUN apt-get update && apt-get install -y \
     build-essential git curl \
     && rm -rf /var/lib/apt/lists/*
 
+# 🔥 Dependencias primero (mejor cache)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install "dvc[s3]"
 
-COPY . .
+# 🔥 SOLO lo necesario
+COPY api/ ./api/
+COPY models/ ./models/
+
+# (opcional si usas utils, schemas, etc)
+# COPY src/ ./src/
 
 EXPOSE 8000
 
