@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import pandas as pd
+import traceback
 
 from api.model import load_model
 from api.schemas import BookingInput
@@ -9,8 +10,20 @@ app = FastAPI(
     version="1.0"
 )
 
-# 🔥 cargar modelo UNA sola vez
-model = load_model()
+model = None
+
+
+@app.on_event("startup")
+def startup():
+    global model
+    try:
+        print("🚀 Loading model...")
+        model = load_model()
+        print("✅ Model loaded successfully")
+    except Exception as e:
+        print("❌ ERROR LOADING MODEL")
+        print(traceback.format_exc())
+        raise e
 
 
 @app.get("/")
@@ -21,19 +34,16 @@ def home():
 @app.post("/predict")
 def predict(data: BookingInput):
 
-    # convertir input a dataframe
     df = pd.DataFrame([data.dict()])
 
-    # predicción
     prediction = model.predict(df)[0]
     probability = model.predict_proba(df)[0][1]
 
-    if probability > 0.7:
-        risk = "ALTO"
-    elif probability > 0.4:
-        risk = "MEDIO"
-    else:
-        risk = "BAJO"
+    risk = (
+        "ALTO" if probability > 0.7 else
+        "MEDIO" if probability > 0.4 else
+        "BAJO"
+    )
 
     return {
         "cancel_prediction": int(prediction),

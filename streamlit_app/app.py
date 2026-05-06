@@ -52,10 +52,10 @@ if st.button("Predecir Cancelación 🚀"):
 
     result = predict_booking(payload)
 
-    if "error" in result:
-        st.error(result["error"])
-    else:
-        st.success("Resultado obtenido 🚀")
+    if result.get("error"):
+        st.error("Error en API 🚨")
+        st.write(result)
+        st.stop()
 
-        st.metric("Cancelación (0/1)", result["cancel_prediction"])
-        st.metric("Probabilidad", round(result["cancel_probability"], 3))
+    st.metric("Cancelación (0/1)", result["cancel_prediction"])
+    st.metric("Probabilidad", result["cancel_probability"])
